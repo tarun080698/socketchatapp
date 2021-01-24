@@ -1,0 +1,27 @@
+.form-wrapper {
+  background-color: rgb(164, 201, 255);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+}
+
+.login-form {
+  width: 350px;
+  height: auto;
+  display: block;
+  justify-content: center;
+  align-items: center;
+  padding: 50px 20px;
+}
+
+.btn-lg-su {
+  padding: 10px;
+  margin: 10px 0px;
+}
+
+.heading {
+  text-align: center;
+  color: #3f51b5;
+}

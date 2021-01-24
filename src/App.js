@@ -1,7 +1,7 @@
 import React from "react";
-import { BrowserRouter, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter, Switch, Route, Link, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
-
+import Auth from "./components/pages/Auth";
 import * as ChatActions from "./store/actions/chatActions";
 
 class App extends React.Component {
@@ -15,7 +15,7 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <input
+        {/* <input
           type="text"
           onChange={(e) => {
             this.setState({ msg: e.target.value });
@@ -35,19 +35,17 @@ class App extends React.Component {
           }}
         >
           Send Message
-        </button>
+        </button>*/}
         <BrowserRouter>
           <Switch>
-            <Route
-              path="/login"
-              render={(props) => {
-                return <h1>Login</h1>;
-              }}
-            />
+            <Route path="/login" component={Auth} />
+            <Route path="/signup" component={Auth} />
             <Route
               path="/"
               render={(props) => {
-                return <h1>Root</h1>;
+                if (!this.props.token) {
+                  return <Redirect to="/login" />;
+                } else return <h1>Root</h1>;
               }}
             />
           </Switch>
