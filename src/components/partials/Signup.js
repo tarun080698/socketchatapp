@@ -10,86 +10,207 @@ import { Paper } from "@material-ui/core";
 const useStyles = makeStyles((theme) => ({
   root: {
     "& .MuiTextField-root": {
-      margin: theme.spacing(1),
+      marginTop: theme.spacing(1),
+      marginBottom: theme.spacing(1),
     },
   },
 }));
-function Signup() {
-  useEffect(() => {
-    console.log(this.props);
-  }, []);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+
+const validEmailRegex = RegExp(
+  /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
+);
+
+function Signup(props) {
+  useEffect(() => {}, []);
+
+  const [state, setState] = useState({
+    name: "",
+    email: "",
+    userName: "",
+    password: "",
+    passwordAgain: "",
+    errors: {
+      name: "",
+      email: "",
+      userName: "",
+      password: "",
+      passwordAgain: "",
+    },
+  });
+
   const classes = useStyles();
+
+  function validateForm(errors) {
+    let valid = true;
+    Object.values(errors).forEach((val) => val.length > 0 && (valid = false));
+    return valid;
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    const { socket } = props;
+    const { errors } = state;
+    if (validateForm(errors)) {
+      console.info("Valid Form");
+      if (socket) {
+        socket.send(
+          JSON.stringify({
+            type: "SIGNUP",
+            data: {
+              name: state.name,
+              userName: state.userName,
+              email: state.email,
+              password: state.password,
+            },
+          })
+        );
+      }
+    } else {
+      console.info("Invalid Form");
+    }
+  }
+
+  function handleChange(e) {
+    e.preventDefault();
+    // let fields = state;
+    let { errors } = state;
+    const { name, value } = e.target;
+
+    switch (name) {
+      case "name":
+        errors.name =
+          value.length < 5 || value.length === 0
+            ? "Name must be 5 characters long!"
+            : "";
+        break;
+      case "userName":
+        errors.userName =
+          value.length < 7 || value.length === 0
+            ? "Username must be 7 characters long!"
+            : "";
+        break;
+      case "email":
+        errors.email =
+          validEmailRegex.test(value) || value.length === 0
+            ? ""
+            : "Email is not valid!";
+        break;
+      case "password":
+        errors.password =
+          value.length < 8 || value.length === 0
+            ? "Password must be 8 characters long!"
+            : "";
+        break;
+      //   case "passwordAgain":
+      //     errors.passwordAgain =
+      //       value !== state.password
+      //         ? "Password and Confirm Passowrd should match!"
+      //         : "";
+      //     break;
+
+      default:
+        break;
+    }
+
+    //   fields.errors = errors
+    //   fields[name] = value
+    console.log(state);
+    setState({ ...state, errors, [name]: value });
+  }
+
   return (
     <div className="form-wrapper">
-      <Paper elevation="4">
+      <Paper elevation={4}>
         <div className="login-form">
           <Typography variant="h4" component="h1" className="heading">
-            Create an Account here
+            Create Account
           </Typography>
-          <br />
-          <form
-            className={classes.root}
-            Validate
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (this.props.socket) {
-                this.props.socket.send(
-                  JSON.stringify({
-                    type: "SIGNUP",
-                    data: {
-                      email: email,
-                      password: password,
-                    },
-                  })
-                );
-                if (email !== "" && password !== "") {
-                  console.log(email, password);
-                }
-              }
-            }}
-          >
+
+          <form className={classes.root} noValidate onSubmit={handleSubmit}>
             <TextField
+              noValidate
+              id="filled-basic"
+              label="Name"
+              variant="filled"
+              type="string"
+              onChange={handleChange}
+              fullWidth={true}
+              name="name"
+              autoFocus={true}
+              color="secondary"
+            />
+            {state.errors.name.length > 0 && (
+              <span className="error">{state.errors.name}</span>
+            )}
+            <TextField
+              noValidate
+              id="filled-basic"
+              label="Username"
+              variant="filled"
+              type="string"
+              onChange={handleChange}
+              fullWidth={true}
+              name="userName"
+              color="secondary"
+            />
+            {state.errors.userName.length > 0 && (
+              <span className="error">{state.errors.userName}</span>
+            )}
+            <TextField
+              noValidate
               id="filled-basic"
               label="Email"
               variant="filled"
-              type="string"
-              onChange={(e) => setEmail(e.target.value)}
-              fullWidth="true"
+              type="email"
+              onChange={handleChange}
+              fullWidth={true}
               name="email"
+              color="secondary"
             />
-            <br />
+            {state.errors.email.length > 0 && (
+              <span className="error">{state.errors.email}</span>
+            )}
             <TextField
               id="filled-basic"
               label="Password"
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handleChange}
               variant="filled"
-              type="string"
+              type="password"
               name="password"
-              fullWidth="true"
+              fullWidth={true}
+              color="secondary"
             />
-            <br />
-            <Button
-              variant="contained"
-              color="primary"
-              type="submit"
-              className="btn-lg-su"
-              style={{
-                padding: "10px 100px",
-                margin: "10px 60px",
-                fontSize: "12px",
-              }}
-            >
-              Signup
-            </Button>
+            {state.errors.password.length > 0 && (
+              <span className="error">{state.errors.password}</span>
+            )}
+            <TextField
+              noValidate
+              id="filled-basic"
+              label="Confirm Password"
+              onChange={handleChange}
+              variant="filled"
+              type="password"
+              name="passwordAgain"
+              fullWidth={true}
+              color="secondary"
+            />
+            {state.errors.passwordAgain.length > 0 && (
+              <span className="error">{state.errors.passwordAgain}</span>
+            )}
+            <div className="btn">
+              <Button
+                variant="contained"
+                type="submit"
+                className="btn"
+                style={{ backgroundColor: "#ff005b", color: "whitesmoke" }}
+              >
+                Create
+              </Button>
+            </div>
           </form>
           <div>
             <p>
-              Already registered? Click here to
-              <Link variant="body2" color="textPrimary">
-                <Link to="/login">Log in </Link>
-              </Link>
+              Already have an account? <Link to="/login">Log in</Link>
             </p>
           </div>
         </div>

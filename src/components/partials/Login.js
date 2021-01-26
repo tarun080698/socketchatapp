@@ -10,76 +10,131 @@ import { Paper } from "@material-ui/core";
 const useStyles = makeStyles((theme) => ({
   root: {
     "& .MuiTextField-root": {
-      margin: theme.spacing(1),
+      marginTop: theme.spacing(1),
+      marginBottom: theme.spacing(1),
     },
   },
 }));
 
-function Login() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+const validEmailRegex = RegExp(
+  /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
+);
+
+function Login(props) {
+  const [state, setState] = useState({
+    email: "",
+    password: "",
+    errors: {
+      email: "",
+      password: "",
+    },
+  });
+
+  function validateForm(errors) {
+    let valid = true;
+    Object.values(errors).forEach((val) => val.length > 0 && (valid = false));
+    return valid;
+  }
+
+  function handleSubmit(event) {
+    const { errors } = state;
+    event.preventDefault();
+    if (validateForm(errors)) {
+      console.info("Valid Form");
+      if (props.socket) {
+        props.socket.send(
+          JSON.stringify({
+            type: "LOGIN",
+            data: { email: state.email, password: state.password },
+          })
+        );
+      }
+    } else {
+      console.info("Invalid Form");
+    }
+  }
+
+  function handleChange(e) {
+    e.preventDefault();
+    let fields = state;
+    let { errors } = state;
+    const { name, value } = e.target;
+
+    switch (name) {
+      case "password":
+        errors.password =
+          value.length < 8 || value.length === 0
+            ? "Password must be 8 characters long!"
+            : "";
+        break;
+      case "email":
+        errors.email =
+          validEmailRegex.test(value) || value.length === 0
+            ? ""
+            : "Email is not valid!";
+        break;
+      default:
+        break;
+    }
+
+    console.log(fields);
+    setState({ ...state, errors, [name]: value });
+  }
 
   const classes = useStyles();
   return (
     <div className="form-wrapper">
-      <Paper elevation="4">
+      <Paper elevation={4}>
         <div className="login-form">
           <Typography variant="h3" component="h1" className="heading">
             WELCOME
           </Typography>
-          <br />
-          <form
-            className={classes.root}
-            Validate
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (username !== "" && password !== "") {
-                console.log(username, password);
-              }
-            }}
-          >
+          <form noValidate className={classes.root} onSubmit={handleSubmit}>
             <TextField
+              noValidate
               id="filled-basic"
-              label="Username"
+              label="Email"
               variant="filled"
-              type="string"
-              onChange={(e) => setUsername(e.target.value)}
-              fullWidth="true"
-              name="username"
+              type="email"
+              onChange={handleChange}
+              fullWidth={true}
+              name="email"
+              autoFocus={true}
+              autoComplete="off"
+              color="secondary"
             />
-            <br />
+            {state.errors.email.length > 0 && (
+              <span className="error">{state.errors.email}</span>
+            )}
             <TextField
               id="filled-basic"
               label="Password"
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handleChange}
               variant="filled"
-              type="string"
+              type="password"
               name="password"
-              fullWidth="true"
+              autoComplete="off"
+              fullWidth={true}
+              color="secondary"
             />
-            <br />
-            <Button
-              variant="contained"
-              color="primary"
-              type="submit"
-              className="btn-lg-su"
-              //   fullWidth="true"
-              style={{
-                padding: "10px 100px",
-                margin: "10px 60px",
-                fontSize: "12px",
-              }}
-              //   onClick={(e) => e.preventDefault()}
-            >
-              Login
-            </Button>
+            {state.errors.password.length > 0 && (
+              <span className="error">{state.errors.password}</span>
+            )}
+            <div className="btn">
+              <Button
+                variant="contained"
+                type="submit"
+                className="btn"
+                style={{ backgroundColor: "#ff005b", color: "whitesmoke" }}
+              >
+                Login
+              </Button>
+            </div>
           </form>
           <div>
             <p>
               Need an Account?
-              <Link variant="body2" color="textPrimary">
-                <Link to="/signup">Click here to Create an account </Link>
-              </Link>
+              <Link to="/signup">Click here to Create an account </Link>
             </p>
           </div>
         </div>

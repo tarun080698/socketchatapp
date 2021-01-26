@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Switch, Route, Link, Redirect } from "react-router-dom";
+import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import Auth from "./components/pages/Auth";
 import * as ChatActions from "./store/actions/chatActions";
@@ -15,27 +15,6 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        {/* <input
-          type="text"
-          onChange={(e) => {
-            this.setState({ msg: e.target.value });
-          }}
-        ></input>
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            if (this.props.socket) {
-              this.props.socket.send(
-                JSON.stringify({
-                  type: "msg",
-                  data: this.state.msg,
-                })
-              );
-            }
-          }}
-        >
-          Send Message
-        </button>*/}
         <BrowserRouter>
           <Switch>
             <Route path="/login" component={Auth} />
