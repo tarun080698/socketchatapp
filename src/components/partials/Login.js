@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import "./styles.css";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
-import { Button, Typography } from "@material-ui/core";
+import { Button, Snackbar, Typography } from "@material-ui/core";
 import { Paper } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
@@ -30,6 +30,7 @@ function Login(props) {
     },
   });
 
+  const [notif, setNotif] = useState(false);
   function validateForm(errors) {
     let valid = true;
     Object.values(errors).forEach((val) => val.length > 0 && (valid = false));
@@ -49,9 +50,8 @@ function Login(props) {
           })
         );
       }
-    } else {
-      console.info("Invalid Form");
     }
+    if (props.token === null && props.err_msg !== "") setNotif(true);
   }
 
   function handleChange(e) {
@@ -77,13 +77,25 @@ function Login(props) {
         break;
     }
 
-    console.log(fields);
+    // console.log(fields);
     setState({ ...state, errors, [name]: value });
   }
+
+  const handleClose = () => {
+    setNotif(false);
+  };
 
   const classes = useStyles();
   return (
     <div className="form-wrapper">
+      <Snackbar
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        open={notif}
+        message={props.err_msg}
+        onClose={handleClose}
+        key={"bottomRight"}
+        autoHideDuration={3000}
+      />
       <Paper elevation={4}>
         <div className="login-form">
           <Typography variant="h3" component="h1" className="heading">

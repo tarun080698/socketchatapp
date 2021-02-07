@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import "./styles.css";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
-import { Button, Typography } from "@material-ui/core";
+import { Button, Snackbar, Typography } from "@material-ui/core";
 import { Paper } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
@@ -37,6 +37,7 @@ function Signup(props) {
       passwordAgain: "",
     },
   });
+  const [notif, setNotif] = useState(false);
 
   const classes = useStyles();
 
@@ -48,10 +49,9 @@ function Signup(props) {
 
   function handleSubmit(event) {
     event.preventDefault();
-    const { socket } = props;
+    const { socket, token, err_msg } = props;
     const { errors } = state;
     if (validateForm(errors)) {
-      console.info("Valid Form");
       if (socket) {
         socket.send(
           JSON.stringify({
@@ -65,9 +65,8 @@ function Signup(props) {
           })
         );
       }
-    } else {
-      console.info("Invalid Form");
     }
+    if (token === null && err_msg !== "") setNotif(true);
   }
 
   function handleChange(e) {
@@ -118,8 +117,20 @@ function Signup(props) {
     setState({ ...state, errors, [name]: value });
   }
 
+  const handleClose = () => {
+    setNotif(false);
+  };
+
   return (
     <div className="form-wrapper">
+      <Snackbar
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        open={notif}
+        onClose={handleClose}
+        message={props.err_msg}
+        key={"bottomRight"}
+        autoHideDuration={3000}
+      />
       <Paper elevation={4}>
         <div className="login-form">
           <Typography variant="h4" component="h1" className="heading">
