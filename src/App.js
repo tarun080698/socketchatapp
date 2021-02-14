@@ -10,6 +10,7 @@ import * as AuthActions from "./store/actions/authActions";
 
 class App extends React.Component {
   componentDidMount() {
+    console.log("App mounted");
     this.props.setupSocket();
   }
 
@@ -41,8 +42,8 @@ class App extends React.Component {
               render={(props) => {
                 if (!this.props.token) {
                   return <Redirect to="/login" />;
-                  } else return <Messenger />;
-                  // } else return (<Messenger />);
+                  // } else return <Messenger />;
+                } else return <ThreadView />;
                 // } else return <h1>root</h1>;
               }}
             />
@@ -52,7 +53,7 @@ class App extends React.Component {
               render={(props) => {
                 if (!this.props.token) {
                   return <Redirect to="/login" />;
-                  } else return (<Messenger />);
+                } else return <Messenger />;
                 // } else return <h1>root</h1>;
               }}
             />

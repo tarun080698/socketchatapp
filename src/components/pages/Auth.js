@@ -5,6 +5,10 @@ import { withRouter } from "react-router-dom";
 import Login from "../partials/Login";
 import Signup from "../partials/Signup";
 class Auth extends Component {
+
+  componentDidMount(){
+    console.log("auth mounted");
+  }
   render() {
     return (
       <div className="auth-wrapper">

@@ -6,11 +6,14 @@ import SideBar from "../partials/SideBar";
 import ThreadView from "../partials/ThreadView";
 
 class Messenger extends Component {
+  componentDidMount() {
+    console.log("Messenger mounted");
+  }
   render() {
     return (
       <div>
-        <SideBar />
-        {/* <ThreadView /> */}
+        {SideBar}
+        {ThreadView}
       </div>
     );
   }

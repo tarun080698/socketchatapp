@@ -47,6 +47,10 @@ function Signup(props) {
     return valid;
   }
 
+  useEffect(() => {
+    console.log("SIGNUP mounted");
+  }, []);
+
   function handleSubmit(event) {
     event.preventDefault();
     const { socket, token, err_msg } = props;

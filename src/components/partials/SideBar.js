@@ -1,9 +1,14 @@
 import { connect } from "formik";
-import React from "react";
+import React, { useEffect } from "react";
 import { withRouter } from "react-router-dom";
 
-function SideBar() {
-  return <div> hello sidebar</div>;
+class SideBar extends React.Component {
+  componentDidMount() {
+    console.log("threadview mounted");
+  }
+  render() {
+    return <div> hello sidebar</div>;
+  }
 }
 
 const mapStateToProps = (state) => ({

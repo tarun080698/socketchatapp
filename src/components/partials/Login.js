@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import "./styles.css";
@@ -36,6 +36,10 @@ function Login(props) {
     Object.values(errors).forEach((val) => val.length > 0 && (valid = false));
     return valid;
   }
+
+  useEffect(() => {
+    console.log("LOGIN mounted");
+  }, []);
 
   function handleSubmit(event) {
     const { errors } = state;
